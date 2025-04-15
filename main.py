@@ -1,19 +1,23 @@
 import pygame 
 from pygame.locals import *
 import time
+
+SIZE = 40
+
 class Snake:
-    def __init__(self, parent_screen):
+    def __init__(self, parent_screen, length):
         self.parent_screen = parent_screen
+        self.length = length
         self.snakeSound = pygame.mixer.Sound("resources/snake-hiss-95241.mp3")
         self.block = pygame.image.load("resources/block.jpg").convert()
-        self.block_x = 100
-        self.block_y = 100
-        self.speed = 15
+        self.block_x = [SIZE]*length
+        self.block_y = [SIZE]*length
         self.direction = 'down'
 
     def draw(self):
         self.parent_screen.fill((25,52,105)) #clears screen so blocks don't save from last movement
-        self.parent_screen.blit(self.block, (self.block_x,self.block_y))
+        for i in range(self.length):
+            self.parent_screen.blit(self.block, (self.block_x[i],self.block_y[i]))
         pygame.display.flip()
 
     def moveLeft(self):
@@ -32,14 +36,20 @@ class Snake:
         pygame.mixer.Sound.play(self.snakeSound)
     
     def walk(self):
+
+        for i in range(self.length-1, 0, -1):
+            self.block_x[i] = self.block_x[i-1]
+            self.block_y[i] = self.block_y[i-1]
+
         if self.direction == 'up':
-            self.block_y -= self.speed
+            self.block_y[0] -= SIZE
         if self.direction == 'down':
-            self.block_y += self.speed
+            self.block_y[0] += SIZE
         if self.direction == 'left':
-            self.block_x -= self.speed
+            self.block_x[0] -= SIZE
         if self.direction == 'right':
-            self.block_x += self.speed
+            self.block_x[0] += SIZE
+
         self.draw()
 
 class Game:
@@ -47,7 +57,7 @@ class Game:
         pygame.init() 
         self.surface = pygame.display.set_mode((1000, 500))
         self.surface.fill((25,52,105))
-        self.snake = Snake(self.surface)
+        self.snake = Snake(self.surface,2)
         self.snake.draw()
 
     def run(self):
