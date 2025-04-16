@@ -4,8 +4,8 @@ import time
 from numpy import random
 
 SIZE = 40
-SURFACE_X = SIZE * 25
-SURFACE_Y = SIZE *20
+SURFACE_X = SIZE * 25 # 1000
+SURFACE_Y = SIZE *20 # 800
 
 class Apple:
     def __init__(self, parent_screen):
@@ -34,6 +34,7 @@ class Snake():
         self.block = pygame.image.load("resources/block.jpg").convert()
         self.block = pygame.transform.scale(self.block, (SIZE, SIZE))
         self.snakeRect = self.block.get_rect()
+        self.snakeRect.topleft = (0, 0)
         self.direction = 'right'
         self.body = []
         self.body.append(self.snakeRect)
@@ -100,6 +101,7 @@ class Game:
     def __init__(self):
         pygame.init() 
         self.surface = pygame.display.set_mode((SURFACE_X, SURFACE_Y))
+        pygame.mixer.init()
         self.surface.fill((25,52,105))
         self.snake = Snake(self.surface, 1)
         self.snake.draw()
@@ -112,7 +114,10 @@ class Game:
         self.displayScore()
         
         if self.is_collision(self.snake.snakeRect, self.apple.appleRect):
-            print("Collision occured")
+            print("Item eaten")
+            eaten = pygame.mixer.Sound("resources/ding.mp3")
+            eaten.set_volume(0.1)
+            pygame.mixer.Sound.play(eaten)
             self.snake.increaseLength()
             self.apple.move()
 
