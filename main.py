@@ -114,21 +114,25 @@ class Game:
         self.displayScore()
         
         if self.is_collision(self.snake.snakeRect, self.apple.appleRect):
-            print("Item eaten")
-            eaten = pygame.mixer.Sound("resources/ding.mp3")
-            eaten.set_volume(0.1)
-            pygame.mixer.Sound.play(eaten)
+            self.playSound("ding")
             self.snake.increaseLength()
             self.apple.move()
 
         #snake colliding with itself
         for i in range(3, self.snake.length):
             if self.is_collision(self.snake.snakeRect, self.snake.body[i]):
+                self.playSound("crash")
                 raise "Game Over"
 
         if self.snake.snakeRect.x < 0 or self.snake.snakeRect.x > SURFACE_X or self.snake.snakeRect.y < 0 or self.snake.snakeRect.y > SURFACE_Y:
+            self.playSound("crash")
             raise "Game Over"    
-            
+
+    def playSound(self, sound):
+        sound = pygame.mixer.Sound(f"resources/{sound}.mp3")
+        sound.set_volume(0.1)
+        pygame.mixer.Sound.play(sound)
+
     def showGameOver(self):
         self.surface.fill((25,52,105))
         font = pygame.font.SysFont('arial', 30)
