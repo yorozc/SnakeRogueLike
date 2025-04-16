@@ -1,19 +1,27 @@
 import pygame 
 from pygame.locals import *
 import time
+from numpy import random
 
 SIZE = 40
+SURFACE_X = 1000
+SURFACE_Y = 800
 
 class Apple:
     def __init__(self, parent_screen):
         self.parent_screen = parent_screen
         self.apple = pygame.image.load("resources/apple.jpg").convert()
-        self.x = SIZE*3
-        self.y = SIZE*3
+        self.x = 120
+        self.y = 120
 
     def draw(self):
         self.parent_screen.blit(self.apple, (self.x,self.y))
         pygame.display.flip()
+
+    def move(self):
+        self.x = random.randint(0,25)*SIZE
+        self.y = random.randint(0,20)*SIZE
+        self.draw()
 
 class Snake:
     def __init__(self, parent_screen, length):
@@ -21,7 +29,7 @@ class Snake:
         self.length = length
         self.snakeSound = pygame.mixer.Sound("resources/snake-hiss-95241.mp3")
         self.block = pygame.image.load("resources/block.jpg").convert()
-        self.block_x = [SIZE]*length
+        self.block_x = [SIZE]*length #[40, 40, 40]
         self.block_y = [SIZE]*length
         self.direction = 'down'
 
@@ -51,7 +59,6 @@ class Snake:
         for i in range(self.length-1, 0, -1):
             self.block_x[i] = self.block_x[i-1]
             self.block_y[i] = self.block_y[i-1]
-            print(i, self.block_x[i])
 
         if self.direction == 'up':
             self.block_y[0] -= SIZE
@@ -67,9 +74,9 @@ class Snake:
 class Game:
     def __init__(self):
         pygame.init() 
-        self.surface = pygame.display.set_mode((1000, 500))
+        self.surface = pygame.display.set_mode((SURFACE_X, SURFACE_Y))
         self.surface.fill((25,52,105))
-        self.snake = Snake(self.surface,4)
+        self.snake = Snake(self.surface,1)
         self.snake.draw()
         self.apple = Apple(self.surface)
         self.apple.draw()
@@ -77,6 +84,15 @@ class Game:
     def play(self):
         self.snake.walk() #snake auto walk
         self.apple.draw()
+
+        if self.is_collision(self.snake.block_x[0], self.snake.block_y[0], self.apple.x, self.apple.y):
+            print("Collision occured")
+            self.apple.move()
+
+    def is_collision(self, x1, y1, x2, y2):
+        if x1 == x2 and y1 == y2:
+                return True
+        return False 
 
     def run(self):
         running = True
