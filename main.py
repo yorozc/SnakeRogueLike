@@ -85,7 +85,6 @@ class Snake():
         for i in range(self.length-1, 0, -1):
             self.body[i].x = self.body[i-1].x
             self.body[i].y = self.body[i-1].y
-            print(i, self.body[i].x, self.body[i].y)
 
         if self.direction == 'up':
             self.body[0].y -= self.speed
@@ -95,10 +94,7 @@ class Snake():
             self.body[0].x -= self.speed
         if self.direction == 'right':
             self.body[0].x += self.speed
-        
-        #print(self.body[0].topleft)
-        print(self.body)
-        
+
         self.draw()
         
     
