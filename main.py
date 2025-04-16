@@ -26,7 +26,7 @@ class Apple:
         self.appleRect.y = random.randint(0,19)*SIZE
         self.draw()
 
-class Snake:
+class Snake():
     def __init__(self, parent_screen, length):
         self.parent_screen = parent_screen
         self.length = length
@@ -35,19 +35,33 @@ class Snake:
         self.block = pygame.image.load("resources/block.jpg").convert()
         self.block = pygame.transform.scale(self.block, (SIZE, SIZE))
         self.snakeRect = self.block.get_rect()
-        print(self.snakeRect)
-        
         self.direction = 'right'
+        self.body = []
+        self.body.append(self.snakeRect)
+        
 
-    def increaseLength(self): #increments length and adds one to list 
+    def increaseLength(self): #increments length and adds one to sprite group
         self.length += 1
-        '''self.block_x.append(-1)
-        self.block_y.append(-1)'''
+
+        tail = self.body[-1] #most recently made element
+
+        if self.direction == 'up':
+            new_pos = (tail.x, tail.y + SIZE)
+        if self.direction == 'down':
+           new_pos = (tail.x, tail.y - SIZE)
+        if self.direction == 'left':
+            new_pos = (tail.x + SIZE, tail.y)
+        if self.direction == 'right':
+            new_pos = (tail.x - SIZE, tail.y)
+
+        new_part = self.block.get_rect(topleft=new_pos)
+        self.body.append(new_part)
 
     def draw(self):
         self.parent_screen.fill((25,52,105)) #clears screen so blocks don't save from last movement
-        pygame.draw.rect(self.parent_screen, (0, 255, 255), self.snakeRect)
-        self.parent_screen.blit(self.block, self.snakeRect)
+        for i in range(self.length):
+            pygame.draw.rect(self.parent_screen, (0, 255, 255), self.body[i])
+            self.parent_screen.blit(self.block, self.body[i])
         pygame.display.flip()
 
     def moveLeft(self):
@@ -68,21 +82,23 @@ class Snake:
     
     def walk(self):
         
-        '''
         for i in range(self.length-1, 0, -1):
-            self.block_x[i] = self.block_x[i-1]
-            self.block_y[i] = self.block_y[i-1]
-        '''
+            self.body[i].x = self.body[i-1].x
+            self.body[i].y = self.body[i-1].y
+            print(i, self.body[i].x, self.body[i].y)
 
         if self.direction == 'up':
-            self.snakeRect.move_ip(0, -self.speed)
+            self.body[0].y -= self.speed
         if self.direction == 'down':
-            self.snakeRect.move_ip(0, +self.speed)
+            self.body[0].y += self.speed
         if self.direction == 'left':
-            self.snakeRect.move_ip(-self.speed, 0)
+            self.body[0].x -= self.speed
         if self.direction == 'right':
-            self.snakeRect.move_ip(+self.speed,0)
-
+            self.body[0].x += self.speed
+        
+        #print(self.body[0].topleft)
+        print(self.body)
+        
         self.draw()
         
     
