@@ -19,7 +19,6 @@ class Apple:
     def draw(self):
         pygame.draw.rect(self.parent_screen, (255, 0, 255), self.appleRect)
         self.parent_screen.blit(self.apple, self.appleRect)
-        pygame.display.flip()
 
     def move(self):
         self.appleRect.x = random.randint(0,24)*SIZE
@@ -62,7 +61,7 @@ class Snake():
         for i in range(self.length):
             pygame.draw.rect(self.parent_screen, (0, 255, 255), self.body[i])
             self.parent_screen.blit(self.block, self.body[i])
-        pygame.display.flip()
+
 
     def moveLeft(self):
         self.direction = 'left'
@@ -112,8 +111,6 @@ class Game:
         self.snake.walk() #snake auto walk
         self.apple.draw()
         self.displayScore()
-        pygame.display.flip()
-
         
         if self.is_collision(self.snake.snakeRect, self.apple.appleRect):
             print("Collision occured")
@@ -182,6 +179,7 @@ class Game:
             try:
                 if not pause:
                     self.play()
+                    pygame.display.flip()
             except Exception as e:
                 self.showGameOver()
                 pause = True
