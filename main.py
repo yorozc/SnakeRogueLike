@@ -13,8 +13,8 @@ class Apple:
         self.apple = pygame.image.load("resources/apple.jpg").convert()
         self.apple = pygame.transform.scale(self.apple, (SIZE, SIZE))
         self.appleRect = self.apple.get_rect()
-        self.appleRect.x = 120
-        self.appleRect.y = 120
+        self.appleRect.x = random.randint(0,24)*SIZE
+        self.appleRect.y = random.randint(0,19)*SIZE
 
     def draw(self):
         pygame.draw.rect(self.parent_screen, (255, 0, 255), self.appleRect)
@@ -96,7 +96,6 @@ class Snake():
 
         self.draw()
         
-    
 class Game:
     def __init__(self):
         pygame.init() 
@@ -120,7 +119,10 @@ class Game:
         #snake colliding with itself
         for i in range(3, self.snake.length):
             if self.is_collision(self.snake.snakeRect, self.snake.body[i]):
-                raise "Game Over"     
+                raise "Game Over"
+
+        if self.snake.snakeRect.x < 0 or self.snake.snakeRect.x > SURFACE_X or self.snake.snakeRect.y < 0 or self.snake.snakeRect.y > SURFACE_Y:
+            raise "Game Over"    
             
     def showGameOver(self):
         self.surface.fill((25,52,105))
@@ -140,6 +142,8 @@ class Game:
         if rect1.colliderect(rect2):
             return True
         return False
+    
+    
     
     def reset(self):
         self.snake = Snake(self.surface, 1)
