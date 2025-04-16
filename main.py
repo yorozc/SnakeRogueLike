@@ -19,8 +19,8 @@ class Apple:
         pygame.display.flip()
 
     def move(self):
-        self.x = random.randint(0,25)*SIZE
-        self.y = random.randint(0,20)*SIZE
+        self.x = random.randint(0,24)*SIZE
+        self.y = random.randint(0,19)*SIZE
         self.draw()
 
 class Snake:
@@ -32,6 +32,11 @@ class Snake:
         self.block_x = [SIZE]*length #[40, 40, 40]
         self.block_y = [SIZE]*length
         self.direction = 'down'
+
+    def increaseLength(self):
+        self.length += 1
+        self.block_x.append(-1)
+        self.block_y.append(-1)
 
     def draw(self):
         self.parent_screen.fill((25,52,105)) #clears screen so blocks don't save from last movement
@@ -87,7 +92,9 @@ class Game:
 
         if self.is_collision(self.snake.block_x[0], self.snake.block_y[0], self.apple.x, self.apple.y):
             print("Collision occured")
+            self.snake.increaseLength()
             self.apple.move()
+            
 
     def is_collision(self, x1, y1, x2, y2):
         if x1 == x2 and y1 == y2:
