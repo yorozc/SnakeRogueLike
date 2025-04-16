@@ -102,6 +102,7 @@ class Game:
         pygame.init() 
         self.surface = pygame.display.set_mode((SURFACE_X, SURFACE_Y))
         pygame.mixer.init()
+        self.playBackgroundMusic()
         self.surface.fill((25,52,105))
         self.snake = Snake(self.surface, 1)
         self.snake.draw()
@@ -128,12 +129,18 @@ class Game:
             self.playSound("crash")
             raise "Game Over"    
 
+    def playBackgroundMusic(self):
+        pygame.mixer.music.load("resources/bg_music_1.mp3")
+        pygame.mixer.music.set_volume(0.1)
+        pygame.mixer.music.play()
+
     def playSound(self, sound):
         sound = pygame.mixer.Sound(f"resources/{sound}.mp3")
         sound.set_volume(0.1)
         pygame.mixer.Sound.play(sound)
 
     def showGameOver(self):
+        pygame.mixer.music.pause()
         self.surface.fill((25,52,105))
         font = pygame.font.SysFont('arial', 30)
         line1 = font.render(f"GAME OVER! Your score is {self.snake.length}", True, (255,255,255))
@@ -168,6 +175,8 @@ class Game:
                         running = False
                     
                     if event.key == K_RETURN:
+                        pygame.mixer.music.rewind()
+                        self.playBackgroundMusic()
                         pause = False
                         self.reset()
 
