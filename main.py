@@ -4,6 +4,17 @@ import time
 
 SIZE = 40
 
+class Apple:
+    def __init__(self, parent_screen):
+        self.parent_screen = parent_screen
+        self.apple = pygame.image.load("resources/apple.jpg").convert()
+        self.x = SIZE*3
+        self.y = SIZE*3
+
+    def draw(self):
+        self.parent_screen.blit(self.apple, (self.x,self.y))
+        pygame.display.flip()
+
 class Snake:
     def __init__(self, parent_screen, length):
         self.parent_screen = parent_screen
@@ -40,6 +51,7 @@ class Snake:
         for i in range(self.length-1, 0, -1):
             self.block_x[i] = self.block_x[i-1]
             self.block_y[i] = self.block_y[i-1]
+            print(i, self.block_x[i])
 
         if self.direction == 'up':
             self.block_y[0] -= SIZE
@@ -57,8 +69,14 @@ class Game:
         pygame.init() 
         self.surface = pygame.display.set_mode((1000, 500))
         self.surface.fill((25,52,105))
-        self.snake = Snake(self.surface,2)
+        self.snake = Snake(self.surface,4)
         self.snake.draw()
+        self.apple = Apple(self.surface)
+        self.apple.draw()
+
+    def play(self):
+        self.snake.walk() #snake auto walk
+        self.apple.draw()
 
     def run(self):
         running = True
@@ -70,19 +88,15 @@ class Game:
 
                     if event.key == K_UP:
                         self.snake.moveUp()
-                        self.snake.direction = 'up'
 
                     if event.key == K_DOWN:
                         self.snake.moveDown()
-                        self.snake.direction = 'down'
 
                     if event.key == K_RIGHT:
                         self.snake.moveRight()
-                        self.snake.direction = 'right'
 
                     if event.key == K_LEFT:
                         self.snake.moveLeft()
-                        self.snake.direction = 'left'
 
                     if event.key == K_SPACE:
                         self.snake.hiss()
@@ -90,7 +104,7 @@ class Game:
                 elif event.type == QUIT:
                     running = False
 
-            self.snake.walk() #snake auto walk
+            self.play()
             time.sleep(0.2)
 
 if __name__ == "__main__":
