@@ -41,8 +41,8 @@ class Snake:
 
     def increaseLength(self): #increments length and adds one to list 
         self.length += 1
-        self.block_x.append(-1)
-        self.block_y.append(-1)
+        '''self.block_x.append(-1)
+        self.block_y.append(-1)'''
 
     def draw(self):
         self.parent_screen.fill((25,52,105)) #clears screen so blocks don't save from last movement
@@ -102,24 +102,22 @@ class Game:
         self.displayScore()
         pygame.display.flip()
 
-        '''
-        if self.is_collision(self.snake.block_x[0], self.snake.block_y[0], self.apple.x, self.apple.y):
+        
+        if self.is_collision(self.snake.snakeRect, self.apple.appleRect):
             print("Collision occured")
             self.snake.increaseLength()
             self.apple.move()
-        '''
+        
 
     def displayScore(self):
         font = pygame.font.SysFont('arial', 30)
         score = font.render(f"Score: {self.snake.length}", True, (255,255,255))
         self.surface.blit(score, (800,10))
             
-    '''
-    def is_collision(self, x1, y1, x2, y2):
-        if x1 == x2 and y1 == y2:
-                return True
-        return False 
-    '''
+    def is_collision(self, rect1, rect2):
+        if rect1.colliderect(rect2):
+            return True
+        return False
 
     def run(self):
         running = True
