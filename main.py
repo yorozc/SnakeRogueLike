@@ -58,7 +58,6 @@ class Snake():
         self.body.append(new_part)
 
     def draw(self):
-        self.parent_screen.fill((25,52,105)) #clears screen so blocks don't save from last movement
         for i in range(self.length):
             pygame.draw.rect(self.parent_screen, (0, 255, 255), self.body[i])
             self.parent_screen.blit(self.block, self.body[i])
@@ -81,7 +80,6 @@ class Snake():
     
     
     def walk(self):
-        
         for i in range(self.length-1, 0, -1):
             self.body[i].x = self.body[i-1].x
             self.body[i].y = self.body[i-1].y
@@ -103,16 +101,17 @@ class Game:
         self.surface = pygame.display.set_mode((SURFACE_X, SURFACE_Y))
         pygame.mixer.init()
         self.playBackgroundMusic()
-        self.surface.fill((25,52,105))
         self.snake = Snake(self.surface, 1)
         self.snake.draw()
         self.apple = Apple(self.surface)
         self.apple.draw()
 
     def play(self):
+        self.renderBackground()
         self.snake.walk() #snake auto walk
         self.apple.draw()
         self.displayScore()
+        pygame.display.flip()
         
         if self.is_collision(self.snake.snakeRect, self.apple.appleRect):
             self.playSound("ding")
@@ -129,6 +128,10 @@ class Game:
             self.playSound("crash")
             raise "Game Over"    
 
+    def renderBackground(self):
+        bg = pygame.image.load("resources/background.jpg")
+        self.surface.blit(bg, (0,0))
+
     def playBackgroundMusic(self):
         pygame.mixer.music.load("resources/bg_music_1.mp3")
         pygame.mixer.music.set_volume(0.1)
@@ -140,8 +143,8 @@ class Game:
         pygame.mixer.Sound.play(sound)
 
     def showGameOver(self):
+        self.renderBackground()
         pygame.mixer.music.pause()
-        self.surface.fill((25,52,105))
         font = pygame.font.SysFont('arial', 30)
         line1 = font.render(f"GAME OVER! Your score is {self.snake.length}", True, (255,255,255))
         self.surface.blit(line1, (200, 300))
@@ -158,8 +161,6 @@ class Game:
         if rect1.colliderect(rect2):
             return True
         return False
-    
-    
     
     def reset(self):
         self.snake = Snake(self.surface, 1)
