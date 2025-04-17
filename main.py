@@ -6,6 +6,7 @@ from numpy import random
 SIZE = 40
 SURFACE_X = SIZE * 25 # 1000
 SURFACE_Y = SIZE *20 # 800
+TEXT_COL = (255,255,255)
 
 class Apple:
     def __init__(self, parent_screen):
@@ -80,7 +81,7 @@ class Snake():
         pygame.mixer.Sound.play(self.snakeSound)
     
     
-    def walk(self):
+    def walk(self): #controls snake auto walk and the parts behind the head (self.body[0])
         
         for i in range(self.length-1, 0, -1):
             self.body[i].x = self.body[i-1].x
@@ -101,6 +102,7 @@ class Game:
     def __init__(self):
         pygame.init() 
         self.surface = pygame.display.set_mode((SURFACE_X, SURFACE_Y))
+        self.font = pygame.font.SysFont("arialblack", 30)
         pygame.mixer.init()
         self.playBackgroundMusic()
         self.surface.fill((25,52,105))
@@ -125,9 +127,15 @@ class Game:
                 self.playSound("crash")
                 raise "Game Over"
 
+        #snake going out of bounds
         if self.snake.snakeRect.x < 0 or self.snake.snakeRect.x > SURFACE_X or self.snake.snakeRect.y < 0 or self.snake.snakeRect.y > SURFACE_Y:
             self.playSound("crash")
             raise "Game Over"    
+
+    #used to draw text 
+    def drawText(self, text, font, text_col, x, y):
+        img = font.render(text, True, text_col)
+        self.surface.blit(img, (x,y))
 
     def playBackgroundMusic(self):
         pygame.mixer.music.load("resources/bg_music_1.mp3")
@@ -142,37 +150,37 @@ class Game:
     def showGameOver(self):
         pygame.mixer.music.pause()
         self.surface.fill((25,52,105))
-        font = pygame.font.SysFont('arial', 30)
-        line1 = font.render(f"GAME OVER! Your score is {self.snake.length}", True, (255,255,255))
-        self.surface.blit(line1, (200, 300))
-        line2 = font.render(f"To play again press Enter. To exit press Escape!", True, (255,255,255))
-        self.surface.blit(line2, (200,350))
+        #font = pygame.font.SysFont('arialblack', 30)
+        line1 = self.font.render(f"GAME OVER! Your score is {self.snake.length}", True, (255,255,255))
+        self.surface.blit(line1, (100, 300))
+        line2 = self.font.render(f"To play again press Enter. To exit press Escape!", True, (255,255,255))
+        self.surface.blit(line2, (100,350))
         pygame.display.flip()
 
     def displayScore(self):
-        font = pygame.font.SysFont('arial', 30)
-        score = font.render(f"Score: {self.snake.length}", True, (255,255,255))
+        #font = pygame.font.SysFont('arialblack', 30)
+        score = self.font.render(f"Score: {self.snake.length}", True, (255,255,255))
         self.surface.blit(score, (800,10))
             
+    #checks for collision between player and item
     def is_collision(self, rect1, rect2):
         if rect1.colliderect(rect2):
             return True
         return False
     
-    
-    
+    #resets snake and apple spawn when player decides to retry
     def reset(self):
         self.snake = Snake(self.surface, 1)
         self.apple = Apple(self.surface)
 
     def run(self):
-        running = True
-        pause = False
+        running = True #game runs
+        pause = False #controls whether game is paused
         while(running):
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
-                        running = False
+                        pause = True
                     
                     if event.key == K_RETURN:
                         pygame.mixer.music.rewind()
@@ -193,21 +201,29 @@ class Game:
                         if event.key == K_LEFT:
                             self.snake.moveLeft()
 
-                        if event.key == K_SPACE:
+                        if event.key == K_s:
                             self.snake.hiss()
+
+                    else:
+                        print("Game is paused")
+                        self.drawText("Game is paused", self.font, (255,255,255), 100, 250)
+                        pygame.display.flip()
 
                 elif event.type == QUIT:
                     running = False
             try:
+
                 if not pause:
                     self.play()
                     pygame.display.flip()
+
             except Exception as e:
+
                 self.showGameOver()
                 pause = True
 
-            time.sleep(0.2)
+            time.sleep(0.2) 
 
-if __name__ == "__main__":
+if __name__ == "__main__": #main func
     game = Game()
     game.run()
