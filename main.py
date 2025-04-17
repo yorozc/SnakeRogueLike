@@ -3,12 +3,13 @@ from pygame.locals import *
 import time
 from numpy import random
 
+#global variables
 SIZE = 40
 SURFACE_X = SIZE * 25 # 1000
 SURFACE_Y = SIZE *20 # 800
 TEXT_COL = (255,255,255)
 
-class Apple:
+class Apple: #item (may change to be a child of a parent item class)
     def __init__(self, parent_screen):
         self.parent_screen = parent_screen
         self.apple = pygame.image.load("resources/apple.jpg").convert()
@@ -26,7 +27,7 @@ class Apple:
         self.appleRect.y = random.randint(0,19)*SIZE
         self.draw()
 
-class Snake():
+class Snake(): #character
     def __init__(self, parent_screen, length):
         self.parent_screen = parent_screen
         self.length = length
@@ -41,12 +42,13 @@ class Snake():
         self.body.append(self.snakeRect)
         
 
-    def increaseLength(self): #increments length and adds one to sprite group
+    def increaseLength(self): #increments length and adds one rect to self.body array
         self.length += 1
 
         tail = self.body[-1] #most recently made element
 
-        if self.direction == 'up':
+        #controls spawn point of body part
+        if self.direction == 'up': 
             new_pos = (tail.x, tail.y + SIZE)
         if self.direction == 'down':
            new_pos = (tail.x, tail.y - SIZE)
