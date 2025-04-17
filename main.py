@@ -61,7 +61,6 @@ class Snake(): #character
         self.body.append(new_part)
 
     def draw(self):
-        self.parent_screen.fill((25,52,105)) #clears screen so blocks don't save from last movement
         for i in range(self.length):
             pygame.draw.rect(self.parent_screen, (0, 255, 255), self.body[i])
             self.parent_screen.blit(self.block, self.body[i])
@@ -107,13 +106,13 @@ class Game:
         self.font = pygame.font.SysFont("arialblack", 30)
         pygame.mixer.init()
         self.playBackgroundMusic()
-        self.surface.fill((25,52,105))
         self.snake = Snake(self.surface, 1)
         self.snake.draw()
         self.apple = Apple(self.surface)
         self.apple.draw()
 
     def play(self):
+        self.renderBackground()
         self.snake.walk() #snake auto walk
         self.apple.draw()
         self.displayScore()
@@ -134,6 +133,10 @@ class Game:
             self.playSound("crash")
             raise "Game Over"    
 
+    def renderBackground(self):
+        background = pygame.image.load("resources/background.jpg")
+        self.surface.blit(background, (0,0))
+
     #used to draw text 
     def drawText(self, text, font, text_col, x, y):
         img = font.render(text, True, text_col)
@@ -150,16 +153,15 @@ class Game:
         pygame.mixer.Sound.play(sound)
 
     def showGameOver(self):
+        self.renderBackground()
         pygame.mixer.music.pause()
-        self.surface.fill((25,52,105))
-        #font = pygame.font.SysFont('arialblack', 30)
         line1 = self.font.render(f"GAME OVER! Your score is {self.snake.length}", True, (255,255,255))
         self.surface.blit(line1, (100, 300))
         line2 = self.font.render(f"To play again press Enter. To exit press Escape!", True, (255,255,255))
         self.surface.blit(line2, (100,350))
+        
 
     def displayScore(self):
-        #font = pygame.font.SysFont('arialblack', 30)
         score = self.font.render(f"Score: {self.snake.length}", True, (255,255,255))
         self.surface.blit(score, (800,10))
             
@@ -212,7 +214,6 @@ class Game:
                 elif event.type == QUIT:
                     running = False
             try:
-
                 if not pause:
                     self.play()
 
