@@ -157,7 +157,6 @@ class Game:
         self.surface.blit(line1, (100, 300))
         line2 = self.font.render(f"To play again press Enter. To exit press Escape!", True, (255,255,255))
         self.surface.blit(line2, (100,350))
-        pygame.display.flip()
 
     def displayScore(self):
         #font = pygame.font.SysFont('arialblack', 30)
@@ -209,7 +208,6 @@ class Game:
                     else:
                         print("Game is paused")
                         self.drawText("Game is paused", self.font, (255,255,255), 100, 250)
-                        pygame.display.flip()
 
                 elif event.type == QUIT:
                     running = False
@@ -217,12 +215,14 @@ class Game:
 
                 if not pause:
                     self.play()
-                    pygame.display.flip()
 
             except Exception as e:
 
                 self.showGameOver()
                 pause = True
+
+
+            pygame.display.flip()
 
             time.sleep(0.2) 
 
