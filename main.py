@@ -112,6 +112,7 @@ class Game:
         self.apple = Apple(self.surface)
         self.apple.draw()
         self.resumeBtn = self.buttonMaker(430, 200, "button_resume.png", 1)
+        self.exitBtn = self.buttonMaker(430, 275, "button_quit.png", 1)
 
     def play(self):
 
@@ -225,8 +226,12 @@ class Game:
 
             if pause and game_over == False:
                 self.drawText("PAUSED", self.font, (255,255,255), 450, 100)
+                
                 if self.resumeBtn.draw(self.surface): #if button pressed, unpause
                     pause = False
+                if self.exitBtn.draw(self.surface):
+                    running = False
+                    
             try:
                 if not pause:
                     self.play()
