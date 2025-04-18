@@ -188,17 +188,20 @@ class Game:
     def run(self):
         running = True #game runs
         pause = False #controls whether game is paused
+        game_over = False
         while(running):
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
 
-                    if event.key == K_ESCAPE: #pause game (brings up menu)
+                    if event.key == K_ESCAPE and game_over == False: #pause game (brings up menu)
                         pause = True
-                    
+                        game_over = False
+
                     if event.key == K_RETURN:
                         pygame.mixer.music.rewind()
                         self.playBackgroundMusic()
                         pause = False
+                        game_over = False
                         self.reset()
 
                     if not pause:
@@ -216,23 +219,22 @@ class Game:
 
                         if event.key == K_s:
                             self.snake.hiss()
-
-            if pause:
-                self.drawText("PAUSED", self.font, (255,255,255), 450, 100)
-                if self.resumeBtn.draw(self.surface):
-                    print("printed")
-                    pause = False
                         
                 elif event.type == QUIT:
                     running = False
+
+            if pause and game_over == False:
+                self.drawText("PAUSED", self.font, (255,255,255), 450, 100)
+                if self.resumeBtn.draw(self.surface): #if button pressed, unpause
+                    pause = False
             try:
                 if not pause:
                     self.play()
 
             except Exception as e:
-                self.showGameOver()
+                game_over = True
                 pause = True
-
+                self.showGameOver()
 
             pygame.display.flip()
             time.sleep(0.15) 
