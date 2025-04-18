@@ -111,11 +111,15 @@ class Game:
         self.snake.draw()
         self.apple = Apple(self.surface)
         self.apple.draw()
+        self.menu_state = "main" #when paused, menu state appears
+        self.mouseReleased = True
         self.resumeBtn = self.buttonMaker(430, 200, "button_resume.png", 1)
-        self.exitBtn = self.buttonMaker(430, 275, "button_quit.png", 1)
+        self.optionsBtn = self.buttonMaker(430, 275, "button_options.png", 1)
+        self.exitBtn = self.buttonMaker(430, 350, "button_quit.png", 1)
+        self.audioBtn = self.buttonMaker(430, 200, "button_audio.png", 1)
+        self.backBtn = self.buttonMaker(430, 275, "button_back.png", 1)
 
     def play(self):
-
         self.renderBackground()
         self.snake.walk() #snake auto walk
         self.apple.draw()
@@ -187,12 +191,16 @@ class Game:
         self.apple = Apple(self.surface)
 
     def run(self):
+        clock = pygame.time.Clock()
         running = True #game runs
         pause = False #controls whether game is paused
         game_over = False
         while(running):
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
+
+                    if event.type == pygame.MOUSEBUTTONUP:
+                        self.mouseReleased = True
 
                     if event.key == K_ESCAPE and game_over == False: #pause game (brings up menu)
                         pause = True
@@ -224,14 +232,42 @@ class Game:
                 elif event.type == QUIT:
                     running = False
 
-            if pause and game_over == False:
-                self.drawText("PAUSED", self.font, (255,255,255), 450, 100)
-                
-                if self.resumeBtn.draw(self.surface): #if button pressed, unpause
-                    pause = False
-                if self.exitBtn.draw(self.surface):
-                    running = False
-                    
+                if pause and game_over == False:
+                    #self.drawText("PAUSED", self.font, (255,255,255), 450, 100)
+                    #check menu state
+                    if self.menu_state == "main":
+                        self.renderBackground() 
+                        if self.resumeBtn.isClicked(event, self.mouseReleased):
+                            pause = False
+                            print("Pressed")
+                            print("-===========-")
+                            
+                        if self.optionsBtn.isClicked(event, self.mouseReleased):
+                            self.menu_state = "options" #opens options menu
+
+                        if self.exitBtn.isClicked(event, self.mouseReleased): #exit button
+                            running = False
+
+                    elif self.menu_state == "options":
+                        self.renderBackground()
+                        #draw button for options
+                        if self.audioBtn.isClicked(event, self.mouseReleased):
+                            pass
+
+                        if self.backBtn.isClicked(event, self.mouseReleased):
+                            self.menu_state = "main"
+
+                    if self.menu_state == "main":
+                        self.renderBackground()
+                        self.resumeBtn.draw(self.surface)
+                        self.optionsBtn.draw(self.surface)
+                        self.exitBtn.draw(self.surface)
+
+                    elif self.menu_state == "options":
+                        self.renderBackground()
+                        self.audioBtn.draw(self.surface)
+                        self.backBtn.draw(self.surface)
+
             try:
                 if not pause:
                     self.play()
@@ -242,7 +278,8 @@ class Game:
                 self.showGameOver()
 
             pygame.display.flip()
-            time.sleep(0.15) 
+            #time.sleep(0.15) 
+            clock.tick(60)
 
 if __name__ == "__main__": #main func
     game = Game()
