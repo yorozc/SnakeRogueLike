@@ -2,11 +2,12 @@ import pygame
 from pygame.locals import *
 import time
 from numpy import random
+import button #button class
 
 #global variables
 SIZE = 40
 SURFACE_X = SIZE * 25 # 1000
-SURFACE_Y = SIZE *20 # 800
+SURFACE_Y = SIZE * 20 # 800
 TEXT_COL = (255,255,255)
 
 class Apple: #item (may change to be a child of a parent item class)
@@ -110,8 +111,10 @@ class Game:
         self.snake.draw()
         self.apple = Apple(self.surface)
         self.apple.draw()
+        self.resumeBtn = self.buttonMaker(430, 200, "button_resume.png", 1)
 
     def play(self):
+
         self.renderBackground()
         self.snake.walk() #snake auto walk
         self.apple.draw()
@@ -132,7 +135,13 @@ class Game:
         if self.snake.snakeRect.x < 0 or self.snake.snakeRect.x > SURFACE_X or self.snake.snakeRect.y < 0 or self.snake.snakeRect.y > SURFACE_Y:
             self.playSound("crash")
             raise "Game Over"    
-
+    
+    #maybe fix this or get rid of it, can't check collision this way
+    def buttonMaker(self, x, y, img, scale): #will be used to load images for button instance
+        image = pygame.image.load(f"resources/{img}").convert_alpha() #don't forget extension
+        return button.Button(x, y, image, scale)
+        
+        
     def renderBackground(self):
         background = pygame.image.load("resources/background.jpg")
         self.surface.blit(background, (0,0))
@@ -182,7 +191,8 @@ class Game:
         while(running):
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
-                    if event.key == K_ESCAPE:
+
+                    if event.key == K_ESCAPE: #pause game (brings up menu)
                         pause = True
                     
                     if event.key == K_RETURN:
@@ -207,10 +217,12 @@ class Game:
                         if event.key == K_s:
                             self.snake.hiss()
 
-                    else:
-                        print("Game is paused")
-                        self.drawText("Game is paused", self.font, (255,255,255), 100, 250)
-
+            if pause:
+                self.drawText("PAUSED", self.font, (255,255,255), 450, 100)
+                if self.resumeBtn.draw(self.surface):
+                    print("printed")
+                    pause = False
+                        
                 elif event.type == QUIT:
                     running = False
             try:
@@ -218,14 +230,12 @@ class Game:
                     self.play()
 
             except Exception as e:
-
                 self.showGameOver()
                 pause = True
 
 
             pygame.display.flip()
-
-            time.sleep(0.2) 
+            time.sleep(0.15) 
 
 if __name__ == "__main__": #main func
     game = Game()
