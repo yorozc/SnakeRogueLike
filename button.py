@@ -12,18 +12,6 @@ class Button:
 
     def draw(self, surface):
         surface.blit(self.image, (self.rect.x, self.rect.y))
-        ''' action = False
-        #mouse pos
-        pos = pygame.mouse.get_pos()
-        
-        #check mouseover and clicked condition
-        if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                self.clicked = True
-                action = True
-
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.clicked = False'''
     
     def isClicked(self, event, mouseRelease):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and mouseRelease:

@@ -236,11 +236,8 @@ class Game:
                     #self.drawText("PAUSED", self.font, (255,255,255), 450, 100)
                     #check menu state
                     if self.menu_state == "main":
-                        self.renderBackground() 
                         if self.resumeBtn.isClicked(event, self.mouseReleased):
                             pause = False
-                            print("Pressed")
-                            print("-===========-")
                             
                         if self.optionsBtn.isClicked(event, self.mouseReleased):
                             self.menu_state = "options" #opens options menu
@@ -249,8 +246,6 @@ class Game:
                             running = False
 
                     elif self.menu_state == "options":
-                        self.renderBackground()
-                        #draw button for options
                         if self.audioBtn.isClicked(event, self.mouseReleased):
                             pass
 
@@ -272,7 +267,7 @@ class Game:
                 if not pause:
                     self.play()
 
-            except Exception as e:
+            except Exception as e: #when snake dies
                 game_over = True
                 pause = True
                 self.showGameOver()
