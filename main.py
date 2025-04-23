@@ -10,6 +10,8 @@ SURFACE_X = SIZE * 25 # 1000
 SURFACE_Y = SIZE * 20 # 800
 TEXT_COL = (255,255,255)
 
+last_time = time.time()
+
 class Apple: #item (may change to be a child of a parent item class)
     def __init__(self, parent_screen):
         self.parent_screen = parent_screen
@@ -41,6 +43,8 @@ class Snake(): #character
         self.direction = 'right'
         self.body = []
         self.body.append(self.snakeRect)
+        self.last_move_time = time.time()
+        self.move_delay = 0.15 #snake moves every 0.15 seconds
         
 
     def increaseLength(self): #increments length and adds one rect to self.body array
@@ -84,19 +88,23 @@ class Snake(): #character
     
     
     def walk(self): #controls snake auto walk and the parts behind the head (self.body[0])
+        current_time = time.time()
+        if current_time - self.last_move_time >= self.move_delay:
+            self.last_move_time = current_time
         
-        for i in range(self.length-1, 0, -1):
-            self.body[i].x = self.body[i-1].x
-            self.body[i].y = self.body[i-1].y
 
-        if self.direction == 'up':
-            self.body[0].y -= self.speed
-        if self.direction == 'down':
-            self.body[0].y += self.speed
-        if self.direction == 'left':
-            self.body[0].x -= self.speed
-        if self.direction == 'right':
-            self.body[0].x += self.speed
+            for i in range(self.length-1, 0, -1):
+                self.body[i].x = self.body[i-1].x
+                self.body[i].y = self.body[i-1].y
+
+            if self.direction == 'up':
+                self.body[0].y -= self.speed
+            if self.direction == 'down':
+                self.body[0].y += self.speed
+            if self.direction == 'left':
+                self.body[0].x -= self.speed
+            if self.direction == 'right':
+                self.body[0].x += self.speed
 
         self.draw()
         
@@ -196,6 +204,7 @@ class Game:
         pause = False #controls whether game is paused
         game_over = False
         while(running):
+
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
 
