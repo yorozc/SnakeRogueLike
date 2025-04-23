@@ -282,8 +282,7 @@ class Game:
                 self.showGameOver()
 
             pygame.display.flip()
-            #time.sleep(0.15) 
-            clock.tick(60)
+            clock.tick(0)
 
 if __name__ == "__main__": #main func
     game = Game()
