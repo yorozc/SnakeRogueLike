@@ -3,6 +3,7 @@ from pygame.locals import *
 import time
 from numpy import random
 import button #button class
+import items #items class
 
 #global variables
 SIZE = 40
@@ -11,24 +12,6 @@ SURFACE_Y = SIZE * 20 # 800
 TEXT_COL = (255,255,255)
 
 last_time = time.time()
-
-class Apple: #item (may change to be a child of a parent item class)
-    def __init__(self, parent_screen):
-        self.parent_screen = parent_screen
-        self.apple = pygame.image.load("resources/apple.jpg").convert()
-        self.apple = pygame.transform.scale(self.apple, (SIZE, SIZE))
-        self.appleRect = self.apple.get_rect()
-        self.appleRect.x = random.randint(0,24)*SIZE
-        self.appleRect.y = random.randint(0,19)*SIZE
-
-    def draw(self):
-        pygame.draw.rect(self.parent_screen, (255, 0, 255), self.appleRect)
-        self.parent_screen.blit(self.apple, self.appleRect)
-
-    def move(self):
-        self.appleRect.x = random.randint(0,24)*SIZE
-        self.appleRect.y = random.randint(0,19)*SIZE
-        self.draw()
 
 class Snake(): #character
     def __init__(self, parent_screen, length):
@@ -92,7 +75,6 @@ class Snake(): #character
         if current_time - self.last_move_time >= self.move_delay:
             self.last_move_time = current_time
         
-
             for i in range(self.length-1, 0, -1):
                 self.body[i].x = self.body[i-1].x
                 self.body[i].y = self.body[i-1].y
@@ -117,8 +99,8 @@ class Game:
         self.playBackgroundMusic()
         self.snake = Snake(self.surface, 1)
         self.snake.draw()
-        self.apple = Apple(self.surface)
-        self.apple.draw()
+        self.item_apple = items.Items(self.surface, "apple.jpg")
+        self.item_apple.draw()
         self.menu_state = "main" #when paused, menu state appears
         self.mouseReleased = True
         self.resumeBtn = self.buttonMaker(430, 200, "button_resume.png", 1)
@@ -130,13 +112,13 @@ class Game:
     def play(self):
         self.renderBackground()
         self.snake.walk() #snake auto walk
-        self.apple.draw()
+        self.item_apple.draw()
         self.displayScore()
         
-        if self.is_collision(self.snake.snakeRect, self.apple.appleRect):
+        if self.is_collision(self.snake.snakeRect, self.item_apple.spriteRect):
             self.playSound("ding")
             self.snake.increaseLength()
-            self.apple.move()
+            self.item_apple.move()
 
         #snake colliding with itself
         for i in range(3, self.snake.length):
@@ -196,7 +178,7 @@ class Game:
     #resets snake and apple spawn when player decides to retry
     def reset(self):
         self.snake = Snake(self.surface, 1)
-        self.apple = Apple(self.surface)
+        self.item_apple = items.Items(self.surface, "apple.jpg")
 
     def run(self):
         clock = pygame.time.Clock()
@@ -282,7 +264,7 @@ class Game:
                 self.showGameOver()
 
             pygame.display.flip()
-            clock.tick(0)
+            clock.tick(0) #uncapped
 
 if __name__ == "__main__": #main func
     game = Game()
