@@ -120,6 +120,7 @@ class Game:
         self.snake.draw()
         self.apple = apple.Apple(self.surface)
         self.apple.move()
+        self.newBullet = bullet.Bullet(self.surface, random.randint(0,24)*40, random.randint(0,19)*40, self.snake.direction)
         self.menu_state = "main" #when paused, menu state appears
         self.mouseReleased = True
         self.resumeBtn = self.buttonMaker(430, 200, "button_resume.png", 1)
@@ -132,6 +133,7 @@ class Game:
         self.renderBackground()
         self.snake.walk() #snake auto walk
         self.apple.draw()
+        self.newBullet.draw()
         self.snake.updateBullets()
         self.displayScore()
         
@@ -140,6 +142,11 @@ class Game:
             self.playSound("ding")
             self.snake.increaseLength()
             self.apple.move()
+
+        if self.is_collision(self.snake.snakeRect, self.newBullet.rect):
+            self.playSound("gun-reload")
+            self.newBullet.collect()
+            self.newBullet.move()
 
         #snake colliding with itself
         for i in range(3, self.snake.length):
@@ -242,8 +249,14 @@ class Game:
                             self.snake.hiss()
 
                         if event.key == K_SPACE:
-                            newBullet = self.snake.shoot() #appending each obj to list
-                            self.snake.bullets.append(newBullet)
+                            if self.newBullet.getAmmo() <= 0:
+                                self.playSound("gun-empty")
+                                #message saying gun empty on screen
+                            else:
+                                newBullet = self.snake.shoot() #instance of bullet class
+                                self.snake.bullets.append(newBullet) #appending each obj to list
+                                self.newBullet.shootAmmo()
+
 
                 elif event.type == QUIT:
                     running = False

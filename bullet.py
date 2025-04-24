@@ -19,6 +19,9 @@ class Bullet(items.Items):
 
     def collect(self):
         self._ammo += 1
+    
+    def shootAmmo(self):
+        self._ammo -= 1
 
     def getAmmo(self):
         return self._ammo
