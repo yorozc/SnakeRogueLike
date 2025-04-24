@@ -99,7 +99,7 @@ class Snake(): #character
     def updateBullets(self):
         for bullet in self.bullets: #updates bullet direction
             bullet.update()
-        
+            
         for i in range(len(self.bullets)-1, -1, -1): #checks if bullets go out of screen
             if self.bullets[i].is_off_screen():
                 self.bullets.pop(i)
@@ -119,7 +119,7 @@ class Game:
         self.snake = Snake(self.surface, 1)
         self.snake.draw()
         self.apple = apple.Apple(self.surface)
-        self.apple.move()
+        self.apple.draw()
         self.newBullet = bullet.Bullet(self.surface, random.randint(0,24)*40, random.randint(0,19)*40, self.snake.direction)
         self.menu_state = "main" #when paused, menu state appears
         self.mouseReleased = True
