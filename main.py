@@ -14,6 +14,7 @@ TEXT_COL = (255,255,255)
 
 last_time = time.time()
 
+
 class Snake(): #character
     def __init__(self, parent_screen, length):
         self.parent_screen = parent_screen
@@ -29,7 +30,7 @@ class Snake(): #character
         self.body.append(self.snakeRect)
         self.last_move_time = time.time()
         self.move_delay = 0.15 #snake moves every 0.15 seconds
-        
+        self.bullets = []
 
     def increaseLength(self): #increments length and adds one rect to self.body array
         self.length += 1
@@ -53,7 +54,6 @@ class Snake(): #character
         for i in range(self.length):
             pygame.draw.rect(self.parent_screen, (0, 255, 255), self.body[i])
             self.parent_screen.blit(self.block, self.body[i])
-
 
     def moveLeft(self):
         self.direction = 'left'
@@ -90,6 +90,24 @@ class Snake(): #character
                 self.body[0].x += self.speed
 
         self.draw()
+
+    def shoot(self):
+        bullet_x = self.body[0].centerx - 20
+        bullet_y = self.body[0].top
+        return bullet.Bullet(self.parent_screen, bullet_x, bullet_y, self.direction)
+
+    def updateBullets(self):
+        for bullet in self.bullets: #updates bullet direction
+            bullet.update()
+        
+        for i in range(len(self.bullets)-1, -1, -1): #checks if bullets go out of screen
+            if self.bullets[i].is_off_screen():
+                self.bullets.pop(i)
+
+        for bullet in self.bullets: #draws bullets
+            bullet.draw()
+           
+
         
 class Game:
     def __init__(self):
@@ -101,8 +119,7 @@ class Game:
         self.snake = Snake(self.surface, 1)
         self.snake.draw()
         self.apple = apple.Apple(self.surface)
-        self.apple.draw()
-        self.bullet = bullet.Bullet(self.surface)
+        self.apple.move()
         self.menu_state = "main" #when paused, menu state appears
         self.mouseReleased = True
         self.resumeBtn = self.buttonMaker(430, 200, "button_resume.png", 1)
@@ -115,19 +132,14 @@ class Game:
         self.renderBackground()
         self.snake.walk() #snake auto walk
         self.apple.draw()
-        self.bullet.draw()
+        self.snake.updateBullets()
         self.displayScore()
         
         # collision with apple
-        if self.is_collision(self.snake.snakeRect, self.apple.spriteRect):
+        if self.is_collision(self.snake.snakeRect, self.apple.rect):
             self.playSound("ding")
             self.snake.increaseLength()
             self.apple.move()
-
-        if self.is_collision(self.snake.snakeRect, self.bullet.spriteRect):
-            self.playSound("gun-reload")
-            self.bullet.collect()
-            self.bullet.move()
 
         #snake colliding with itself
         for i in range(3, self.snake.length):
@@ -229,9 +241,10 @@ class Game:
                         if event.key == K_s:
                             self.snake.hiss()
 
-                        if event.key == K_f:
-                            self.bullet.shoot()
-                        
+                        if event.key == K_SPACE:
+                            newBullet = self.snake.shoot() #appending each obj to list
+                            self.snake.bullets.append(newBullet)
+
                 elif event.type == QUIT:
                     running = False
 
@@ -269,7 +282,7 @@ class Game:
             try:
                 if not pause:
                     self.play()
-
+                    
             except Exception as e: #when snake dies
                 game_over = True
                 pause = True
