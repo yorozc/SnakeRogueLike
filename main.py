@@ -253,6 +253,7 @@ class Game:
                                 self.playSound("gun-empty")
                                 #message saying gun empty on screen
                             else:
+                                self.playSound("gun-shot")
                                 newBullet = self.snake.shoot() #instance of bullet class
                                 self.snake.bullets.append(newBullet) #appending each obj to list
                                 self.newBullet.shootAmmo()
