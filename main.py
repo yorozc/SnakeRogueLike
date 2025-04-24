@@ -3,7 +3,7 @@ from pygame.locals import *
 import time
 from numpy import random
 import button #button class
-import items #items class
+import apple #child of items class
 
 #global variables
 SIZE = 40
@@ -99,8 +99,8 @@ class Game:
         self.playBackgroundMusic()
         self.snake = Snake(self.surface, 1)
         self.snake.draw()
-        self.item_apple = items.Items(self.surface, "apple.jpg")
-        self.item_apple.draw()
+        self.apple = apple.Apple(self.surface)
+        self.apple.draw()
         self.menu_state = "main" #when paused, menu state appears
         self.mouseReleased = True
         self.resumeBtn = self.buttonMaker(430, 200, "button_resume.png", 1)
@@ -112,13 +112,13 @@ class Game:
     def play(self):
         self.renderBackground()
         self.snake.walk() #snake auto walk
-        self.item_apple.draw()
+        self.apple.draw()
         self.displayScore()
         
-        if self.is_collision(self.snake.snakeRect, self.item_apple.spriteRect):
+        if self.is_collision(self.snake.snakeRect, self.apple.spriteRect):
             self.playSound("ding")
             self.snake.increaseLength()
-            self.item_apple.move()
+            self.apple.move()
 
         #snake colliding with itself
         for i in range(3, self.snake.length):
@@ -178,7 +178,7 @@ class Game:
     #resets snake and apple spawn when player decides to retry
     def reset(self):
         self.snake = Snake(self.surface, 1)
-        self.item_apple = items.Items(self.surface, "apple.jpg")
+        self.apple = apple.Apple(self.surface)
 
     def run(self):
         clock = pygame.time.Clock()
