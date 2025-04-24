@@ -145,7 +145,7 @@ class Game:
 
         if self.is_collision(self.snake.snakeRect, self.newBullet.rect):
             self.playSound("gun-reload")
-            self.newBullet.collect()
+            self.newBullet.reload()
             self.newBullet.move()
 
         #snake colliding with itself

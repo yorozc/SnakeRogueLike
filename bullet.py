@@ -17,7 +17,7 @@ class Bullet(items.Items):
         self.vel = 8
         self.direction = direction
 
-    def collect(self):
+    def reload(self):
         self._ammo += 1
     
     def shootAmmo(self):
