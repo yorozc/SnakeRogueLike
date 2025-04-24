@@ -1,10 +1,12 @@
 import pygame 
 from pygame.locals import *
 import time
+import math
 from numpy import random
 import button #button class
 import apple #child of items class
 import bullet
+import speedBoost
 
 #global variables
 SIZE = 40
@@ -106,9 +108,7 @@ class Snake(): #character
 
         for bullet in self.bullets: #draws bullets
             bullet.draw()
-           
-
-        
+                   
 class Game:
     def __init__(self):
         pygame.init() 
@@ -121,6 +121,7 @@ class Game:
         self.apple = apple.Apple(self.surface)
         self.apple.draw()
         self.newBullet = bullet.Bullet(self.surface, random.randint(0,24)*40, random.randint(0,19)*40, self.snake.direction)
+        self.speedBoost = speedBoost.speedboost(self.surface)
         self.menu_state = "main" #when paused, menu state appears
         self.mouseReleased = True
         self.resumeBtn = self.buttonMaker(430, 200, "button_resume.png", 1)
@@ -134,6 +135,7 @@ class Game:
         self.snake.walk() #snake auto walk
         self.apple.draw()
         self.newBullet.draw()
+        self.speedBoost.draw()
         self.snake.updateBullets()
         self.displayScore()
         
@@ -147,6 +149,12 @@ class Game:
             self.playSound("gun-reload")
             self.newBullet.reload()
             self.newBullet.move()
+
+        if self.is_collision(self.snake.snakeRect, self.speedBoost.rect):
+            self.playSound("lightning-strike")
+            newSpeed,_ = self.speedBoost.applySpeed(self.snake.move_delay)
+            self.snake.move_delay = newSpeed
+            self.speedBoost.move()
         
         #bullet and apple collision
         for i in range(len(self.snake.bullets)):
@@ -154,6 +162,15 @@ class Game:
                 self.playSound("ding")
                 self.snake.increaseLength()
                 self.apple.move()
+                self.snake.bullets.pop(i)
+
+        for i in range(len(self.snake.bullets)):
+            if self.is_collision(self.snake.bullets[i].rect, self.speedBoost.rect):
+                self.playSound("lightning-strike")
+                newSpeed, newVel = self.speedBoost.applySpeed(self.snake.move_delay, self.snake.bullets[i].vel)
+                self.snake.move_delay = newSpeed
+                self.snake.bullets[i].vel = newVel
+                self.speedBoost.move()
                 self.snake.bullets.pop(i)
 
         #snake colliding with itself
