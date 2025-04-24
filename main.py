@@ -147,6 +147,14 @@ class Game:
             self.playSound("gun-reload")
             self.newBullet.reload()
             self.newBullet.move()
+        
+        #bullet and apple collision
+        for i in range(len(self.snake.bullets)):
+            if self.is_collision(self.snake.bullets[i].rect, self.apple.rect):
+                self.playSound("ding")
+                self.snake.increaseLength()
+                self.apple.move()
+                self.snake.bullets.pop(i)
 
         #snake colliding with itself
         for i in range(3, self.snake.length):
@@ -192,7 +200,6 @@ class Game:
         line2 = self.font.render(f"To play again press Enter. To exit press Escape!", True, (255,255,255))
         self.surface.blit(line2, (100,350))
         
-
     def displayScore(self):
         score = self.font.render(f"Score: {self.snake.length}", True, (255,255,255))
         self.surface.blit(score, (800,10))
