@@ -4,6 +4,7 @@ import time
 from numpy import random
 import button #button class
 import apple #child of items class
+import bullet
 
 #global variables
 SIZE = 40
@@ -101,6 +102,7 @@ class Game:
         self.snake.draw()
         self.apple = apple.Apple(self.surface)
         self.apple.draw()
+        self.bullet = bullet.Bullet(self.surface)
         self.menu_state = "main" #when paused, menu state appears
         self.mouseReleased = True
         self.resumeBtn = self.buttonMaker(430, 200, "button_resume.png", 1)
@@ -113,12 +115,19 @@ class Game:
         self.renderBackground()
         self.snake.walk() #snake auto walk
         self.apple.draw()
+        self.bullet.draw()
         self.displayScore()
         
+        # collision with apple
         if self.is_collision(self.snake.snakeRect, self.apple.spriteRect):
             self.playSound("ding")
             self.snake.increaseLength()
             self.apple.move()
+
+        if self.is_collision(self.snake.snakeRect, self.bullet.spriteRect):
+            self.playSound("gun-reload")
+            self.bullet.collect()
+            self.bullet.move()
 
         #snake colliding with itself
         for i in range(3, self.snake.length):
@@ -219,6 +228,9 @@ class Game:
 
                         if event.key == K_s:
                             self.snake.hiss()
+
+                        if event.key == K_f:
+                            self.bullet.shoot()
                         
                 elif event.type == QUIT:
                     running = False
