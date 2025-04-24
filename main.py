@@ -163,7 +163,7 @@ class Game:
                 raise "Game Over"
 
         #snake going out of bounds
-        if self.snake.snakeRect.x < 0 or self.snake.snakeRect.x > SURFACE_X or self.snake.snakeRect.y < 0 or self.snake.snakeRect.y > SURFACE_Y:
+        if self.snake.body[0].x < 0 or self.snake.body[0].x > SURFACE_X or self.snake.body[0].y < 0 or self.snake.body[0].y > SURFACE_Y:
             self.playSound("crash")
             raise "Game Over"    
     
@@ -203,6 +203,7 @@ class Game:
     def displayScore(self):
         score = self.font.render(f"Score: {self.snake.length}", True, (255,255,255))
         self.surface.blit(score, (800,10))
+    
             
     #checks for collision between player and item
     def is_collision(self, rect1, rect2):

@@ -1,4 +1,5 @@
 import items
+import pygame
 
 SIZE = 40
 SURFACE_X = SIZE * 25 # 1000
@@ -13,9 +14,18 @@ class Bullet(items.Items):
         #x and y of snake head
         self.rect.x = x
         self.rect.y = y
-        self._ammo = 0
+        self._ammo = 15
         self.vel = 8
         self.direction = direction
+        if self.direction == 'up':
+            self.sprite = pygame.transform.rotate(self.sprite, 90)
+        if self.direction == 'down':
+            self.sprite = pygame.transform.rotate(self.sprite, -90)
+        if self.direction == 'left':
+            self.sprite = pygame.transform.rotate(self.sprite, 180)
+        if self.direction == 'right':
+            self.sprite = pygame.transform.rotate(self.sprite, 0)
+
 
     def reload(self):
         self._ammo += 1
