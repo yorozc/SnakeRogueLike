@@ -14,7 +14,7 @@ class Bullet(items.Items):
         #x and y of snake head
         self.rect.x = x
         self.rect.y = y
-        self._ammo = 15
+        self._ammo = 0
         self.vel = 8
         self.direction = direction
         if self.direction == 'up':
