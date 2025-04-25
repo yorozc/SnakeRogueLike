@@ -256,17 +256,17 @@ class Game:
         if self.backBtn.isClicked(event, self.mouseReleased):
             self.menu_state = "main"
 
-            if self.menu_state == "main":
-                self.renderBackground()
-                self.resumeBtn.draw(self.surface)
-                self.optionsBtn.draw(self.surface)
-                self.exitBtn.draw(self.surface)
+        if self.menu_state == "main":
+            self.renderBackground()
+            self.resumeBtn.draw(self.surface)
+            self.optionsBtn.draw(self.surface)
+            self.exitBtn.draw(self.surface)
 
-            elif self.menu_state == "options":
-                self.renderBackground()
-                self.audioBtn.draw(self.surface)
-                self.videoBtn.draw(self.surface)
-                self.backBtn.draw(self.surface)
+        elif self.menu_state == "options":
+            self.renderBackground()
+            self.audioBtn.draw(self.surface)
+            self.videoBtn.draw(self.surface)
+            self.backBtn.draw(self.surface)
 
     def run(self):
         clock = pygame.time.Clock()
@@ -314,7 +314,6 @@ class Game:
                                 newBullet = self.snake.shoot() #instance of bullet class
                                 self.snake.bullets.append(newBullet) #appending each obj to list
                                 self.newBullet.shootAmmo()
-
 
                 elif event.type == QUIT:
                     self.running = False
