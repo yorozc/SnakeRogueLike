@@ -157,7 +157,7 @@ class Game:
 
         if self.is_collision(self.snake.snakeRect, self.speedBoost.rect):
             self.playSound("lightning-strike")
-            newSpeed,_ = self.speedBoost.applySpeed(self.snake.move_delay)
+            newSpeed = self.speedBoost.applySpeed(self.snake.move_delay)
             self.snake.move_delay = newSpeed
             self.speedBoost.move()
         
@@ -169,12 +169,13 @@ class Game:
                 self.apple.move()
                 self.snake.bullets.remove(bullet)
 
+        #bullet and speedbost collision
         for bullet in self.snake.bullets[:]:
             if self.is_collision(bullet.rect, self.speedBoost.rect):
                 self.playSound("lightning-strike")
-                newSpeed, newVel = self.speedBoost.applySpeed(self.snake.move_delay, bullet.vel)
+                newSpeed = self.speedBoost.applySpeed(self.snake.move_delay)
                 self.snake.move_delay = newSpeed
-                bullet.vel = newVel
+            
                 self.speedBoost.move()
                 self.snake.bullets.remove(bullet)
 
@@ -182,12 +183,15 @@ class Game:
         for i in range(3, self.snake.length):
             if self.is_collision(self.snake.snakeRect, self.snake.body[i]):
                 self.playSound("crash")
-                raise "Game Over"
+                self.pause = True 
+                self.game_over = True
 
         #snake going out of bounds
         if self.snake.body[0].x < 0 or self.snake.body[0].x > SURFACE_X or self.snake.body[0].y < 0 or self.snake.body[0].y > SURFACE_Y:
             self.playSound("crash")
-            raise "Game Over"    
+            #raise "Game Over"   
+            self.pause = True 
+            self.game_over = True
     
     #maybe fix this or get rid of it, can't check collision this way
     def buttonMaker(self, x, y, img, scale): #will be used to load images for button instance
@@ -214,13 +218,39 @@ class Game:
         sound.set_volume(0.1)
         pygame.mixer.Sound.play(sound)
 
-    def showGameOver(self):
+    def showGameOver(self, event):
         self.renderBackground()
         pygame.mixer.music.pause()
-        line1 = self.font.render(f"GAME OVER! Your score is {self.snake.length}", True, (255,255,255))
-        self.surface.blit(line1, (100, 300))
-        line2 = self.font.render(f"To play again press Enter. To exit press Escape!", True, (255,255,255))
-        self.surface.blit(line2, (100,350))
+        if self.menu_state == "main":
+            if self.resumeBtn.isClicked(event, self.mouseReleased):
+                self.pause = False
+                            
+            if self.optionsBtn.isClicked(event, self.mouseReleased):
+                 self.menu_state = "options" #opens options menu
+
+            if self.exitBtn.isClicked(event, self.mouseReleased): #exit button
+                self.running = False
+
+        elif self.menu_state == "options":
+            if self.audioBtn.isClicked(event, self.mouseReleased):
+                pass
+
+            if self.backBtn.isClicked(event, self.mouseReleased):
+                self.menu_state = "main"
+
+        if self.menu_state == "main":
+            self.renderBackground()
+            line1 = self.font.render(f"GAME OVER! Your score is {self.snake.length}", True, (255,255,255))
+            self.surface.blit(line1, (300, 100))
+            self.resumeBtn.draw(self.surface)
+            self.optionsBtn.draw(self.surface)
+            self.exitBtn.draw(self.surface)
+
+        elif self.menu_state == "options":
+            self.renderBackground()
+            self.audioBtn.draw(self.surface)
+            self.videoBtn.draw(self.surface)
+            self.backBtn.draw(self.surface)
         
     def displayScore(self):
         score = self.font.render(f"Score: {self.snake.length}", True, (255,255,255))
@@ -237,6 +267,8 @@ class Game:
     def reset(self):
         self.snake = Snake(self.surface, 1)
         self.apple = apple.Apple(self.surface)
+        self.snake.bullets.clear()
+        self.snake.move_delay = 0.15
 
     def drawMainMenu(self, event):
         if self.menu_state == "main":
@@ -281,13 +313,6 @@ class Game:
                     if event.key == K_ESCAPE and self.game_over == False: #pause game (brings up menu)
                         self.pause = True
                         self.game_over = False
-                    
-                    if event.key == K_RETURN:
-                        pygame.mixer.music.rewind()
-                        self.playBackgroundMusic()
-                        self.pause = False
-                        self.game_over = False
-                        self.reset()
 
                     if not self.pause:
                         if event.key == K_UP:
@@ -353,15 +378,20 @@ class Game:
                     #self.drawText("PAUSED", self.font, (255,255,255), 450, 100)
                     #check menu state
                     self.drawMainMenu(event)
+
+                if self.pause and self.game_over:
+                    self.showGameOver(event)
+                    if self.resumeBtn.isClicked(event, self.mouseReleased):
+                        pygame.mixer.music.rewind()
+                        self.playBackgroundMusic()
+                        self.pause = False
+                        self.game_over = False
+                        self.reset()
                 
-            try:
-                if not self.pause:
-                    self.play()
+            if not self.pause:
+                self.play()
                     
-            except Exception as e: #when snake dies
-                self.game_over = True
-                self.pause = True
-                self.showGameOver()
+                
 
             pygame.display.flip()
             clock.tick(0) #uncapped

@@ -8,15 +8,11 @@ class speedboost(items.Items):
             sprite="speedBoost.png"
         )
 
-    def applySpeed(self, snakeSpeed, *args):
-        bulletvel = None
+    def applySpeed(self, snakeSpeed):
 
-        if snakeSpeed <= 0.05:
+        if snakeSpeed <= 0.09:
             print("Speed capped")
         else:
             snakeSpeed -= 0.01
-
-            if len(args) == 2:
-                bulletvel = args[1] + 0.1
         
-        return snakeSpeed, bulletvel
+        return snakeSpeed
