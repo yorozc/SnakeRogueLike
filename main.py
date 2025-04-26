@@ -129,8 +129,8 @@ class Game:
         self.first_start = True
         self.running = True
         self.resumeBtn = self.buttonMaker(430, 200, "button_resume.png", 1)
-        self.optionsBtn = self.buttonMaker(430, 275, "button_options.png", 1)
-        self.exitBtn = self.buttonMaker(430, 350, "button_quit.png", 1)
+        self.optionsBtn = self.buttonMaker(425, 325, "button_options.png", 1)
+        self.exitBtn = self.buttonMaker(455, 450, "button_quit.png", 1)
         self.audioBtn = self.buttonMaker(430, 200, "button_audio.png", 1)
         self.videoBtn = self.buttonMaker(430, 275, "button_video.png", 1)
         self.backBtn = self.buttonMaker(430, 350, "button_back.png", 1)
@@ -249,12 +249,12 @@ class Game:
             if self.exitBtn.isClicked(event, self.mouseReleased): #exit button
                 self.running = False
 
-            elif self.menu_state == "options":
-                if self.audioBtn.isClicked(event, self.mouseReleased):
-                    pass
+        elif self.menu_state == "options":
+            if self.audioBtn.isClicked(event, self.mouseReleased):
+                pass
 
-        if self.backBtn.isClicked(event, self.mouseReleased):
-            self.menu_state = "main"
+            if self.backBtn.isClicked(event, self.mouseReleased):
+                self.menu_state = "main"
 
         if self.menu_state == "main":
             self.renderBackground()
@@ -281,7 +281,7 @@ class Game:
                     if event.key == K_ESCAPE and self.game_over == False: #pause game (brings up menu)
                         self.pause = True
                         self.game_over = False
-
+                    
                     if event.key == K_RETURN:
                         pygame.mixer.music.rewind()
                         self.playBackgroundMusic()
@@ -353,10 +353,9 @@ class Game:
                     #self.drawText("PAUSED", self.font, (255,255,255), 450, 100)
                     #check menu state
                     self.drawMainMenu(event)
-
+                
             try:
                 if not self.pause:
-                    print(self.menu_state)
                     self.play()
                     
             except Exception as e: #when snake dies
