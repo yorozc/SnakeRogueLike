@@ -133,7 +133,7 @@ class Game:
         self.exitBtn = self.buttonMaker(455, 450, "button_quit.png", 1)
         self.audioBtn = self.buttonMaker(430, 200, "button_audio.png", 1)
         self.videoBtn = self.buttonMaker(430, 275, "button_video.png", 1)
-        self.backBtn = self.buttonMaker(430, 350, "button_back.png", 1)
+        self.backBtn = self.buttonMaker(455, 450, "button_back.png", 1)
 
     def play(self):
         self.renderBackground()
@@ -232,8 +232,6 @@ class Game:
                 self.running = False
 
         elif self.menu_state == "options":
-            if self.audioBtn.isClicked(event, self.mouseReleased):
-                pass
 
             if self.backBtn.isClicked(event, self.mouseReleased):
                 self.menu_state = "main"
@@ -251,6 +249,9 @@ class Game:
             self.audioBtn.draw(self.surface)
             self.videoBtn.draw(self.surface)
             self.backBtn.draw(self.surface)
+        
+        elif self.menu_state == "audio":
+            self.renderBackground()
         
     def displayScore(self):
         score = self.font.render(f"Score: {self.snake.length}", True, (255,255,255))
@@ -282,8 +283,6 @@ class Game:
                 self.running = False
 
         elif self.menu_state == "options":
-            if self.audioBtn.isClicked(event, self.mouseReleased):
-                pass
 
             if self.backBtn.isClicked(event, self.mouseReleased):
                 self.menu_state = "main"
@@ -296,8 +295,6 @@ class Game:
 
         elif self.menu_state == "options":
             self.renderBackground()
-            self.audioBtn.draw(self.surface)
-            self.videoBtn.draw(self.surface)
             self.backBtn.draw(self.surface)
 
     def run(self):
@@ -356,8 +353,6 @@ class Game:
                             self.running = False
 
                     elif self.menu_state == "options":
-                        if self.audioBtn.isClicked(event, self.mouseReleased):
-                            pass
 
                         if self.backBtn.isClicked(event, self.mouseReleased):
                             self.menu_state = "main"
@@ -370,8 +365,6 @@ class Game:
 
                     elif self.menu_state == "options":
                             self.renderBackground()
-                            self.audioBtn.draw(self.surface)
-                            self.videoBtn.draw(self.surface)
                             self.backBtn.draw(self.surface)
 
                 if self.pause and self.game_over == False and self.first_start == False:
